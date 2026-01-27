@@ -18,7 +18,13 @@ interface UserWithId extends User {
   id: number;
 }
 
-export function AdminUsersTable() {
+interface AdminUsersClientTableProps {
+  initialUsers: UserWithId[];
+  totalInitialUsers: number;
+  currentUser: User;
+}
+
+export function AdminUsersTable({ initialUsers, totalInitialUsers, currentUser }: AdminUsersClientTableProps) {
   const [users, setUsers] = useState<UserWithId[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
