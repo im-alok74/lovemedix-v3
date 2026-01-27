@@ -1,8 +1,7 @@
 import { getCurrentUser } from '@/lib/auth'
 import { sql } from '@/lib/db'
 import { NextResponse } from 'next/server'
-import bcrypt from 'bcrypt'
-
+import bcrypt from 'bcryptjs' // Changed from 'bcrypt' to 'bcryptjs'
 export async function POST() {
   try {
     const user = await getCurrentUser()
@@ -11,7 +10,7 @@ export async function POST() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.log('[v0] Setting up demo pharmacy...')
+    console.log('[v0 Setting up demo pharmacy...')
 
     // 1. Create demo pharmacy user
     const hashedPassword = await bcrypt.hash('demo123456', 10)
@@ -155,3 +154,4 @@ export async function POST() {
     )
   }
 }
+
