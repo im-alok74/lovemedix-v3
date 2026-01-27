@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation"
-import { getCurrentUser } from "@/lib/auth-server"
+import { requireRole } from "@/lib/auth-server"
+import { AdminOrdersTable } from "@/components/admin/admin-orders-table"
 import { AdminLayout } from "@/components/admin/admin-layout"
 
 export default async function AdminOrdersPage() {
-  const user = await getCurrentUser()
+  const user = await requireRole(["admin"])
 
-  if (!user || user.user_type !== "admin") {
+  if (!user) {
     redirect("/signin")
   }
 
@@ -17,9 +18,7 @@ export default async function AdminOrdersPage() {
           <p className="text-muted-foreground">Manage all orders on the platform</p>
         </div>
 
-        <div className="rounded-lg border border-border bg-card p-12 text-center">
-          <p className="text-muted-foreground">Order management coming soon</p>
-        </div>
+        <AdminOrdersTable />
       </div>
     </AdminLayout>
   )
