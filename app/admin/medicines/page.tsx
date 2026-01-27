@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { getCurrentUser } from "@/lib/auth"
+import { getCurrentUser } from "@/lib/auth-server"
 import { AdminLayout } from "@/components/admin/admin-layout"
 
 export default async function AdminMedicinesPage() {

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { getCurrentUser } from "@/lib/auth"
+import { getCurrentUser } from "@/lib/auth-server"
 import { sql } from "@/lib/db"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"

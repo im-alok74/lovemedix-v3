@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ShoppingCart, Menu, Pill, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { getCurrentUser } from "@/lib/auth"
+import { getCurrentUser } from "@/lib/auth-server"
 import {
   DropdownMenu,
   DropdownMenuContent,

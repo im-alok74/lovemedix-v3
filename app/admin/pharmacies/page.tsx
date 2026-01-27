@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { getCurrentUser } from "@/lib/auth"
+import { getCurrentUser } from "@/lib/auth-server"
 import { sql } from "@/lib/db"
 import { AdminLayout } from "@/components/admin/admin-layout"
 import { Card, CardContent } from "@/components/ui/card"

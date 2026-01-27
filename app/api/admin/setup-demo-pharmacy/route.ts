@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth-server'
 import { sql } from '@/lib/db'
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs' // Changed from 'bcrypt' to 'bcryptjs'
