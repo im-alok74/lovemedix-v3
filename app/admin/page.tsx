@@ -1,15 +1,15 @@
 import { redirect } from "next/navigation"
-import { getCurrentUser } from "@/lib/auth-server"
+import { getCurrentUser, requireRole } from "@/lib/auth-server"
 import { sql } from "@/lib/db"
 import { AdminLayout } from "@/components/admin/admin-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, Building2, Package, ShoppingCart, Pill, FileText } from "lucide-react"
 
 export default async function AdminDashboardPage() {
-  const user = await getCurrentUser()
+  const user = await requireRole(["admin"])
 
-  if (!user || user.user_type !== "admin") {
-    redirect("/")
+  if (!user) {
+    redirect("/signin")
   }
 
   // Get statistics

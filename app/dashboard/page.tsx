@@ -1,16 +1,16 @@
 import { redirect } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { getCurrentUser } from "@/lib/auth-server"
+import { getCurrentUser, requireRole } from "@/lib/auth-server"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Package, FileText, User, MapPin } from "lucide-react"
 
 export default async function DashboardPage() {
-  const user = await getCurrentUser()
+  const user = await requireRole(["customer"])
 
-  if (!user || user.user_type !== "customer") {
+  if (!user) {
     redirect("/signin")
   }
 

@@ -1,16 +1,16 @@
 import { redirect } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { getCurrentUser } from "@/lib/auth-server"
+import { getCurrentUser, requireRole } from "@/lib/auth-server"
 import { sql } from "@/lib/db"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Package, Building2, MapPin } from "lucide-react"
 
 export default async function DistributorDashboardPage() {
-  const user = await getCurrentUser()
+  const user = await requireRole(["distributor"])
 
-  if (!user || user.user_type !== "distributor") {
+  if (!user) {
     redirect("/signin")
   }
 

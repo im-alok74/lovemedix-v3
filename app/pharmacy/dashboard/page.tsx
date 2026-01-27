@@ -2,7 +2,7 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { getCurrentUser } from "@/lib/auth-server"
+import { getCurrentUser, requireRole } from "@/lib/auth-server"
 import { checkSellerVerification, getSellerProfile } from "@/lib/seller-auth"
 import { sql } from "@/lib/db"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,9 +11,9 @@ import { Button } from "@/components/ui/button"
 import { Package, DollarSign, CheckCircle, Clock, TrendingUp, AlertCircle, FileText, Plus } from "lucide-react"
 
 export default async function PharmacyDashboardPage() {
-  const user = await getCurrentUser()
+  const user = await requireRole(["pharmacy"])
 
-  if (!user || user.user_type !== "pharmacy") {
+  if (!user) {
     redirect("/signin")
   }
 

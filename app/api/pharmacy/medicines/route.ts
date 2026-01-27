@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth-server'
+import { getCurrentUser, requireRole } from '@/lib/auth-server'
 import { checkSellerVerification, getSellerProfile, logAccessAttempt } from '@/lib/seller-auth'
 import { sql } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getCurrentUser()
-
-    if (!user || user.user_type !== 'pharmacy') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    let user
+    try {
+      user = await requireRole(['pharmacy'])
+    } catch (error: any) {
+      if (error.message === 'Unauthorized') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+      if (error.message === 'Forbidden') {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      }
+      return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 
     // Check if pharmacy is verified
@@ -79,10 +86,17 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await getCurrentUser()
-
-    if (!user || user.user_type !== 'pharmacy') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    let user
+    try {
+      user = await requireRole(['pharmacy'])
+    } catch (error: any) {
+      if (error.message === 'Unauthorized') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+      if (error.message === 'Forbidden') {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      }
+      return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 
     const profile = await getSellerProfile(user.id, 'pharmacy')

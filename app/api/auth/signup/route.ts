@@ -9,11 +9,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 })
     }
 
-    if (userType === "admin") {
-      if (adminSecret !== "create-lovemedix-admin-2024") {
-        return NextResponse.json({ error: "Invalid admin secret key" }, { status: 403 })
-      }
-    } else if (!["customer", "pharmacy", "distributor"].includes(userType)) {
+    if (!["customer", "pharmacy", "distributor"].includes(userType)) {
       return NextResponse.json({ error: "Invalid user type" }, { status: 400 })
     }
 
