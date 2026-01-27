@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { User } from "@/lib/auth-server"
+import { User } from "@/lib/types"
 import { Search, ChevronLeft, ChevronRight } from "lucide-react"
 
 interface UserWithId extends User {
