@@ -88,7 +88,7 @@ export async function POST() {
 
     // 3. Get all medicines
     const medicines = await sql`
-      SELECT id, mrp FROM medicines LIMIT 300
+      SELECT id, mrp FROM medicines
     `
 
     console.log('[v0] Found', medicines.length, 'medicines to map')
@@ -117,7 +117,7 @@ export async function POST() {
             ${sellingPrice},
             10,
             'BATCH-2024',
-            DATE_ADD(CURRENT_DATE, INTERVAL 2 YEAR),
+            CURRENT_DATE + INTERVAL '2 years',
             CURRENT_TIMESTAMP
           )
           ON CONFLICT DO NOTHING

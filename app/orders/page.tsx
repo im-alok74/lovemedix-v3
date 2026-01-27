@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth-server"
 import { sql } from "@/lib/db"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 export default async function OrdersPage() {
   const user = await getCurrentUser()
@@ -81,7 +82,7 @@ export default async function OrdersPage() {
                             {order.payment_status}
                           </Badge>
                         </div>
-                      </div>
+                        </div>
 
                       {order.street_address && (
                         <div>
@@ -106,6 +107,14 @@ export default async function OrdersPage() {
                           <p className="text-sm text-muted-foreground">Delivered On</p>
                           <p className="font-medium text-foreground">{new Date(order.delivered_at).toLocaleString()}</p>
                         </div>
+                      )}
+
+                      {(order.order_status === "delivered" || order.order_status === "confirmed") && (
+                        <a href={`/api/orders/${order.order_number}/invoice`} target="_blank" rel="noopener noreferrer">
+                          <Button variant="outline" className="mt-4">
+                            Download Invoice
+                          </Button>
+                        </a>
                       )}
                     </div>
                   </CardContent>

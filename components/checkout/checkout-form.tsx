@@ -29,6 +29,12 @@ export function CheckoutForm({ userId }: { userId: number }) {
   const [isPlacingOrder, setIsPlacingOrder] = useState(false)
   const [deliveryAddress, setDeliveryAddress] = useState("")
   const [phone, setPhone] = useState("")
+  const [fullName, setFullName] = useState("")
+  const [addressLine1, setAddressLine1] = useState("")
+  const [addressLine2, setAddressLine2] = useState("")
+  const [city, setCity] = useState("")
+  const [state, setState] = useState("")
+  const [pincode, setPincode] = useState("")
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod')
   const { toast } = useToast()
   const router = useRouter()
@@ -77,10 +83,10 @@ export function CheckoutForm({ userId }: { userId: number }) {
   }
 
   const handlePlaceOrder = async () => {
-    if (!deliveryAddress.trim()) {
+    if (!fullName.trim()) {
       toast({
-        title: "Address Required",
-        description: "Please enter your delivery address",
+        title: "Name Required",
+        description: "Please enter your full name",
         variant: "destructive",
       })
       return
@@ -95,15 +101,56 @@ export function CheckoutForm({ userId }: { userId: number }) {
       return
     }
 
+    if (!addressLine1.trim()) {
+      toast({
+        title: "Address Line 1 Required",
+        description: "Please enter your address line 1",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!city.trim()) {
+      toast({
+        title: "City Required",
+        description: "Please enter your city",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!state.trim()) {
+      toast({
+        title: "State Required",
+        description: "Please enter your state",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!pincode.trim()) {
+      toast({
+        title: "Pincode Required",
+        description: "Please enter your pincode",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsPlacingOrder(true)
 
     try {
-      const response = await fetch("/api/orders", {
+      const response = await fetch("/api/orders/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          deliveryAddress,
+          fullName,
           phone,
+          addressLine1,
+          addressLine2,
+          city,
+          state,
+          pincode,
           cartItems,
           paymentMethod,
         }),
@@ -164,6 +211,17 @@ export function CheckoutForm({ userId }: { userId: number }) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
+              <Label htmlFor="fullName">Full Name *</Label>
+              <Input
+                id="fullName"
+                type="text"
+                placeholder="Enter your full name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+              />
+            </div>
+            <div>
               <Label htmlFor="phone">Phone Number *</Label>
               <Input
                 id="phone"
@@ -175,15 +233,60 @@ export function CheckoutForm({ userId }: { userId: number }) {
               />
             </div>
             <div>
-              <Label htmlFor="address">Delivery Address *</Label>
-              <Textarea
-                id="address"
-                placeholder="Enter complete delivery address with landmark"
-                value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
-                rows={4}
+              <Label htmlFor="addressLine1">Address Line 1 *</Label>
+              <Input
+                id="addressLine1"
+                type="text"
+                placeholder="House No., Building, Street Name"
+                value={addressLine1}
+                onChange={(e) => setAddressLine1(e.target.value)}
                 required
               />
+            </div>
+            <div>
+              <Label htmlFor="addressLine2">Address Line 2</Label>
+              <Input
+                id="addressLine2"
+                type="text"
+                placeholder="Landmark, Area, Colony (Optional)"
+                value={addressLine2}
+                onChange={(e) => setAddressLine2(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div>
+                <Label htmlFor="city">City *</Label>
+                <Input
+                  id="city"
+                  type="text"
+                  placeholder="City"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="state">State *</Label>
+                <Input
+                  id="state"
+                  type="text"
+                  placeholder="State"
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="pincode">Pincode *</Label>
+                <Input
+                  id="pincode"
+                  type="text"
+                  placeholder="Pincode"
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                  required
+                />
+              </div>
             </div>
           </CardContent>
         </Card>

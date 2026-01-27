@@ -49,23 +49,38 @@ export function PharmacyOrdersList({ pharmacyId }: { pharmacyId: number }) {
 
   const updateOrderStatus = async (orderId: number, newStatus: string) => {
     try {
-      const response = await fetch(`/api/pharmacy/orders/${orderId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      })
+      let response
+      if (newStatus === "confirmed") {
+        response = await fetch(`/api/pharmacy/orders/${orderId}/accept`, {
+          method: "POST",
+        })
+      } else {
+        response = await fetch(`/api/pharmacy/orders/${orderId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        })
+      }
 
       if (response.ok) {
         toast({
           title: "Success",
-          description: "Order status updated",
+          description: `Order status updated to ${newStatus}`,
         })
         fetchOrders()
+      } else {
+        const errorData = await response.json()
+        toast({
+          title: "Error",
+          description: errorData.error || "Failed to update order status",
+          variant: "destructive",
+        })
       }
     } catch (error) {
+      console.error("Error updating order status:", error)
       toast({
         title: "Error",
-        description: "Failed to update order status",
+        description: "Something went wrong",
         variant: "destructive",
       })
     }
@@ -160,6 +175,14 @@ export function PharmacyOrdersList({ pharmacyId }: { pharmacyId: number }) {
                       <Button size="sm" onClick={() => updateOrderStatus(order.id, "out_for_delivery")}>
                         Mark as Out for Delivery
                       </Button>
+                    )}
+
+                    {(order.order_status === "confirmed" || order.order_status === "delivered") && (
+                      <a href={`/api/orders/${order.order_number}/invoice`} target="_blank" rel="noopener noreferrer">
+                        <Button size="sm" variant="outline" className="mt-4">
+                          Download Invoice
+                        </Button>
+                      </a>
                     )}
                   </div>
                 </CardContent>

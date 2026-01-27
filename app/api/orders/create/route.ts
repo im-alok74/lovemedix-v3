@@ -18,13 +18,68 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await request.json()
-    const { deliveryAddress, phone, cartItems } = data
+    const {
+      fullName,
+      phone: deliveryPhone,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      pincode,
+      cartItems,
+    } = data
 
-    if (!deliveryAddress || !phone || !cartItems || cartItems.length === 0) {
+    if (
+      !fullName ||
+      !deliveryPhone ||
+      !addressLine1 ||
+      !city ||
+      !state ||
+      !pincode ||
+      !cartItems ||
+      cartItems.length === 0
+    ) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: "Missing required fields" },
         { status: 400 }
       )
+    }
+
+    let deliveryAddressId: number
+
+    // Check if address already exists for the user
+    const existingAddress = await sql`
+      SELECT id FROM addresses
+      WHERE user_id = ${user.id}
+      AND full_name = ${fullName}
+      AND phone = ${deliveryPhone}
+      AND address_line1 = ${addressLine1}
+      AND city = ${city}
+      AND state = ${state}
+      AND pincode = ${pincode}
+      ${addressLine2 ? sql`AND address_line2 = ${addressLine2}` : sql`AND address_line2 IS NULL`}
+      LIMIT 1
+    `
+
+    if (existingAddress.length > 0) {
+      deliveryAddressId = existingAddress[0].id as number
+    } else {
+      // Insert new address
+      const newAddress = await sql`
+        INSERT INTO addresses (user_id, full_name, phone, address_line1, address_line2, city, state, pincode)
+        VALUES (
+          ${user.id},
+          ${fullName},
+          ${deliveryPhone},
+          ${addressLine1},
+          ${addressLine2 || null},
+          ${city},
+          ${state},
+          ${pincode}
+        )
+        RETURNING id
+      `
+      deliveryAddressId = newAddress[0].id as number
     }
 
     // Group items by pharmacy to create separate orders
@@ -72,7 +127,7 @@ export async function POST(request: NextRequest) {
           ${orderNumber},
           ${user.id},
           ${pharmacyId},
-          NULL,
+          ${deliveryAddressId},
           'pending',
           'pending',
           'cod',

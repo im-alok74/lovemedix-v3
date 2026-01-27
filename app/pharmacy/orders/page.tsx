@@ -1,14 +1,14 @@
 import { redirect } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { getCurrentUser } from "@/lib/auth-server"
+import { getCurrentUser, requireRole } from "@/lib/auth-server"
 import { sql } from "@/lib/db"
 import { PharmacyOrdersList } from "@/components/pharmacy/pharmacy-orders-list"
 
 export default async function PharmacyOrdersPage() {
-  const user = await getCurrentUser()
+  const user = await requireRole(["pharmacy"])
 
-  if (!user || user.user_type !== "pharmacy") {
+  if (!user) {
     redirect("/signin")
   }
 
