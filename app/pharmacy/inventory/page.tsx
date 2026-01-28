@@ -2,10 +2,18 @@ import { redirect } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { getCurrentUser } from "@/lib/auth-server"
-import { sql } from "@/lib/db"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import { Plus } from "lucide-react"
+import Link from "next/link"
+import { sql } from "@/lib/db"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 export default async function PharmacyInventoryPage() {
   const user = await getCurrentUser()
@@ -25,7 +33,7 @@ export default async function PharmacyInventoryPage() {
   }
 
   const pharmacyInventory = await sql`
-    SELECT 
+    SELECT
       pi.id,
       m.name as medicine_name,
       m.salt_composition,
@@ -42,29 +50,29 @@ export default async function PharmacyInventoryPage() {
   `
 
   return (
-    <div className=\"flex min-h-screen flex-col\">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className=\"flex-1\">
-        <div className=\"container mx-auto px-4 py-8\">
-          <div className=\"mb-8 flex items-center justify-between\">
-            <h1 className=\"text-3xl font-bold text-foreground\">Inventory Management</h1>
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-8 flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-foreground">Inventory Management</h1>
             <Button asChild>
-              <Link href=\"/pharmacy/inventory/add\">
-                <Plus className=\"mr-2 h-4 w-4\" />
+              <Link href="/pharmacy/inventory/add">
+                <Plus className="mr-2 h-4 w-4" />
                 Add Medicine
               </Link>
             </Button>
           </div>
 
           {pharmacyInventory.length === 0 ? (
-            <div className=\"rounded-lg border border-border bg-card p-12 text-center\">
-              <p className=\"text-muted-foreground\">No medicines in your inventory yet. Add some to get started!</p>
-              <Button asChild className=\"mt-4\">
-                <Link href=\"/pharmacy/inventory/add\">Add Medicine</Link>
+            <div className="rounded-lg border border-border bg-card p-12 text-center">
+              <p className="text-muted-foreground">No medicines in your inventory yet. Add some to get started!</p>
+              <Button asChild className="mt-4">
+                <Link href="/pharmacy/inventory/add">Add Medicine</Link>
               </Button>
             </div>
           ) : (
-            <div className=\"rounded-lg border border-border bg-card\">
+            <div className="rounded-lg border border-border bg-card">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -81,7 +89,7 @@ export default async function PharmacyInventoryPage() {
                 <TableBody>
                   {pharmacyInventory.map((item: any) => (
                     <TableRow key={item.id}>
-                      <TableCell className=\"font-medium\">{item.medicine_name}</TableCell>
+                      <TableCell className="font-medium">{item.medicine_name}</TableCell>
                       <TableCell>{item.salt_composition}</TableCell>
                       <TableCell>{item.stock_quantity}</TableCell>
                       <TableCell>₹{item.selling_price.toFixed(2)}</TableCell>
@@ -89,10 +97,11 @@ export default async function PharmacyInventoryPage() {
                       <TableCell>{item.batch_number}</TableCell>
                       <TableCell>{new Date(item.expiry_date).toLocaleDateString()}</TableCell>
                       <TableCell>
-                        <Link href={\`/pharmacy/inventory/\${item.id}/edit\`} className=\"text-primary hover:underline\">Edit</Link>
+                        <Link href={`/pharmacy/inventory/${item.id}/edit`} className="text-primary hover:underline">Edit</Link>
                       </TableCell>
                     </TableRow>
-                  ))}\n                </TableBody>
+                  ))}
+                </TableBody>
               </Table>
             </div>
           )}
