@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache'
 import { getCurrentUser } from "@/lib/auth-server"
 import { sql } from "@/lib/db"
 import { NextResponse } from "next/server"
@@ -12,7 +13,10 @@ export async function PATCH(request: Request, { params }: { params: { pharmacyId
     }
 
     const { verificationStatus } = await request.json()
-    const pharmacyId = parseInt(params.pharmacyId)
+    const pharmacyId = Number(await params.pharmacyId)
+    if (isNaN(pharmacyId)) {
+      return NextResponse.json({ error: 'Invalid pharmacy ID' }, { status: 400 })
+    }
 
     console.log("[v0] Updating pharmacy", pharmacyId, "to status:", verificationStatus)
 
@@ -22,17 +26,18 @@ export async function PATCH(request: Request, { params }: { params: { pharmacyId
           updated_at = CURRENT_TIMESTAMP
       WHERE id = ${pharmacyId}
       RETURNING id, verification_status
-    `
+    ` as { rows: any[] }
+    revalidatePath("/admin/pharmacies")
 
     console.log("[v0] Update result:", result)
 
-    if (result.length === 0) {
-      return NextResponse.json({ error: "Pharmacy not found" }, { status: 404 })
+    if (!result || result.rows.length === 0) {
+      return NextResponse.json({ error: "Pharmacy not found or update failed" }, { status: 404 })
     }
 
     return NextResponse.json({ 
       success: true,
-      pharmacy: result[0],
+      pharmacy: result.rows[0],
       message: `Pharmacy successfully ${verificationStatus}`
     })
   } catch (error) {

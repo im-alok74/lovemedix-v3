@@ -139,6 +139,18 @@ export function CheckoutForm({ userId }: { userId: number }) {
 
     setIsPlacingOrder(true)
 
+    console.log("[v0] Placing order with data:", {
+      fullName,
+      phone,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      pincode,
+      cartItems,
+      paymentMethod,
+    })
+
     try {
       const response = await fetch("/api/orders/create", {
         method: "POST",

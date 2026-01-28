@@ -14,12 +14,13 @@ export default async function AdminDistributorsPage() {
     redirect("/signin")
   }
 
-  const distributors = await sql`
+  const distributorsResult = await sql`
     SELECT d.*, u.email, u.full_name, u.phone
     FROM distributor_profiles d
     JOIN users u ON d.user_id = u.id
     ORDER BY d.created_at DESC
-  `
+  ` as { rows: any[] }
+  const distributors = (distributorsResult && distributorsResult.rows) ? distributorsResult.rows : []
 
   return (
     <AdminLayout>

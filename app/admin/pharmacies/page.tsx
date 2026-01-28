@@ -14,12 +14,13 @@ export default async function AdminPharmaciesPage() {
     redirect("/signin")
   }
 
-  const pharmacies = await sql`
+  const pharmaciesResult = await sql`
     SELECT p.*, u.email, u.full_name, u.phone
     FROM pharmacy_profiles p
     JOIN users u ON p.user_id = u.id
     ORDER BY p.created_at DESC
-  `
+  ` as { rows: any[] }
+  const pharmacies = (pharmaciesResult && pharmaciesResult.rows) ? pharmaciesResult.rows : []
 
   return (
     <AdminLayout>

@@ -49,8 +49,14 @@ export function AdminOrdersTable() {
       params.set("page", currentPage.toString())
       params.set("limit", "10")
 
-      const response = await fetch(`/api/admin/orders?${params.toString()}`)
+      const response = await fetch(`/api/admin/orders?${params.toString()}`, {
+        credentials: "include",
+        cache: "no-store",
+      })
+
       const data = await response.json()
+      console.log("ADMIN ORDERS FETCH STATUS:", response.status)
+      console.log("ADMIN ORDERS FETCH DATA:", data)
 
       if (response.ok) {
         setOrders(data.orders)

@@ -37,24 +37,25 @@ export async function GET(request: NextRequest) {
 
     const finalWhereClause = whereClause ? `WHERE ${whereClause}` : ''
 
-    const users = await sql.query(`
+    const usersResult = await sql.query(`
       SELECT id, email, full_name, phone, user_type, status, created_at
       FROM users
       ${finalWhereClause}
       ORDER BY created_at DESC
       LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2}
-    `, [...queryParams, limit, offset])
+    `, [...queryParams, limit, offset]) as { rows: any[] }
+    const users = (usersResult && usersResult.rows) ? usersResult.rows : []
 
     const totalUsersResult = await sql.query(`
       SELECT COUNT(*) as total
       FROM users
       ${finalWhereClause}
-    `, queryParams)
+    `, queryParams) as { rows: any[] }
 
-    const totalUsers = (totalUsersResult.rows[0] as any).total
+    const totalUsers = (totalUsersResult && totalUsersResult.rows && totalUsersResult.rows.length > 0) ? (totalUsersResult.rows[0] as any).total : 0
 
     return NextResponse.json({
-      users: users.rows,
+      users: users,
       totalUsers,
       page,
       limit,
