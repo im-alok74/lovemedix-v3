@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
       ${finalWhereClause}
     `, queryParams)
 
-    const totalOrders = (totalOrdersResult.rows[0] as any).total
+    const totalOrders = totalOrdersResult.rows.length > 0 ? (totalOrdersResult.rows[0] as any).total : 0
 
     return NextResponse.json({
       orders: orders.rows,

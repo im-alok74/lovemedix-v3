@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
         RETURNING id
       `
 
-      const orderId = (orderResult[0] as any).id
+      const orderId = orderResult && orderResult[0] ? (orderResult[0] as any).id : null
 
       // Add order items
       for (const item of pharmacyItems) {
